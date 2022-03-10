@@ -8,6 +8,35 @@ mutation createCategory {
     description
   }
 }
+
+mutation createCourse {
+  createCourse(input: { name: "JavaScript ninja", description: "Se torne um ninja em JS", categoryId: "" }) {
+    id
+    name
+    description
+    category {
+      id
+      name
+    }
+  }
+}
+
+mutation createChapter {
+  createChapter(input: { name: "Capítulo 1", courseId: "C8674665223082153551" }) {
+    id
+    name
+    course {
+      id
+      name
+      description
+      category {
+        id
+        name
+        description
+      }
+    }
+  }
+}
 ```
 
 ## Queries
@@ -22,6 +51,39 @@ query findCategories {
       id
       name
       description
+    }
+  }
+}
+
+query findCourses {
+  courses {
+    id
+    name
+    description
+    category {
+      id
+      name
+    }
+    chapters {
+      id
+      name
+    }
+  }
+}
+
+query findChapter {
+  chapters {
+    id
+    name
+    course {
+      id
+      name
+      description
+      category {
+        id
+        name
+        description
+      }
     }
   }
 }
