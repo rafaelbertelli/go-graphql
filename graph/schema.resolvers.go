@@ -8,14 +8,70 @@ import (
 	"fmt"
 	"graphql-go/graph/generated"
 	"graphql-go/graph/model"
+	"math/rand"
 )
 
-func (r *mutationResolver) CreateTodo(ctx context.Context, input model.NewTodo) (*model.Todo, error) {
-	panic(fmt.Errorf("not implemented"))
+func (r *mutationResolver) CreateCategory(ctx context.Context, input model.NewCategory) (*model.Category, error) {
+	category := model.Category{
+		ID:          fmt.Sprintf("T%d", rand.Int()),
+		Name:        input.Name,
+		Description: input.Description,
+	}
+
+	r.Categories = append(r.Categories, &category)
+	return &category, nil
 }
 
-func (r *queryResolver) Todos(ctx context.Context) ([]*model.Todo, error) {
-	panic(fmt.Errorf("not implemented"))
+func (r *mutationResolver) CreateCourse(ctx context.Context, input model.NewCourse) (*model.Course, error) {
+
+	var category *model.Category
+
+	for _, v := range r.Categories {
+		if v.ID == input.CategoryID {
+			category = v
+		}
+	}
+
+	course := model.Course{
+		ID:          fmt.Sprintf("C%d", rand.Int()),
+		Name:        input.Name,
+		Description: input.Description,
+		Category:    category,
+	}
+
+	r.Courses = append(r.Courses, &course)
+	return &course, nil
+}
+
+func (r *mutationResolver) CreateChapter(ctx context.Context, input model.NewChapter) (*model.Chapter, error) {
+	var course *model.Course
+
+	for _, v := range r.Courses {
+		if v.ID == input.CourseID {
+			course = v
+		}
+	}
+
+	chapter := model.Chapter{
+		ID:     fmt.Sprintf("C%d", rand.Int()),
+		Name:   input.Name,
+		Course: course,
+	}
+
+	r.Chapters = append(r.Chapters, &chapter)
+	return &chapter, nil
+}
+
+func (r *queryResolver) Categories(ctx context.Context) ([]*model.Category, error) {
+	return r.Resolver.Categories, nil
+}
+
+func (r *queryResolver) Courses(ctx context.Context) ([]*model.Course, error) {
+	return r.Resolver.Courses, nil
+}
+
+func (r *queryResolver) Chapters(ctx context.Context) ([]*model.Chapter, error) {
+	return r.Resolver.Chapters, nil
 }
 
 // Mutation returns generated.MutationResolver implementation.
